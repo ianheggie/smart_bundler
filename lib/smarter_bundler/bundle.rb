@@ -20,11 +20,11 @@ module SmarterBundler
           previous_failure = failed_gem_and_version
           if install_failed_gem failed_gem_and_version
             puts "Retrying seems to have fixed the problem"
-          elsif gemfile.restrict_gem_version failed_gem_and_version
+          elsif ruby_version_clash(results) && gemfile.restrict_gem_version(failed_gem_and_version)
             gemfile.save
             count += 1
           else
-            puts "Aborting: Unable to install the same or earlier version of the gem"
+            puts "Aborting: Unable to fix installation of gems"
             exit 2
           end
         else
@@ -41,6 +41,10 @@ module SmarterBundler
 
     def install_failed_gem(failed_gem_and_version)
       shell? "gem install '#{failed_gem_and_version[0]}' -v '#{failed_gem_and_version[1]}'"
+    end
+
+    def ruby_version_clash(results)
+      result.output.select{|l| l =~ /requires Ruby version/}.any?
     end
 
     def parse_output(result)

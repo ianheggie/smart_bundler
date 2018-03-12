@@ -24,7 +24,7 @@ module SmarterBundler
           gem_and_name = $1
           rest_of_line = $4
           version = $3.to_s
-          new_version = version.sub(/<=?\s*[^,\s]+/, '').sub(/^\s*,/, '').sub(/,\s*$/, '') + (version == '' ? '' : ', ') + "< #{version_limit}"
+          new_version = version.sub(/<=?\s*[^,\s]+/, '').sub(/^\s*,\s*/, '').sub(/\s*,\s*$/, '') + (version == '' ? '' : ', ') + "< #{version_limit}"
           if new_version != version
             @changed = true
             rest_of_line.sub(/#.*/, '')
