@@ -1,15 +1,8 @@
 sudo: false
 language: ruby
-rvm:
-  - 1.8.7
-  - 1.9.3
-  - 2.2.1
-  - 2.2.9
-  - 2.3.6
-  - 2.4.3
 
 before_install: 
-  - gem update --system
+  - gem update --system  $RUBYGEMS_VERSION
   - gem --version
   - gem install bundler -v ${BUNDLER_VERSION:-1.16.0}
   - bundle --version
@@ -19,4 +12,24 @@ script: ./bin/test
 
 matrix:
   fast_finish: true
+
+matrix:
+  allow_failures:
+    - rvm: 1.8.7
+      gemfile: test/rails_2.3_lts.gemfile
+      env: RUBYGEMS_VERSION=1.8.25 RAILS_VERSION=2.3
+
+  include:
+    - rvm: 1.8.7
+      env: RUBYGEMS_VERSION=1.8.25
+
+    - rvm: 1.9.3
+
+    - rvm: 2.2.1
+
+    - rvm: 2.2.9
+
+    - rvm: 2.3.6
+
+    - rvm: 2.4.3
 
