@@ -3,9 +3,11 @@
 set -e
 
 ruby_version=`ruby -e 'puts RUBY_VERSION'`
+pysc_ver='> 2.0 < 3.0'
 case "$ruby_version" in
 1.8.7)
         dirs='rails30 rails31 rails32'
+        psych_ver='> 2.0 < 2.0.4'
         ;;
 1.9.2)
         dirs='rails30 rails31 rails32'
@@ -24,17 +26,31 @@ case "$ruby_version" in
         ;;
 2.2.2)
         dirs='rails32 rails42 rails50 rails51'
+        psych_ver='> 2.0'
         ;;
 2.2.[2-9]*|2.[3-9]*)
         dirs='rails50 rails51'
+        gem install psych
+        psych_ver='> 2.0'
         ;;
 esac
+if gem list | egrep 'psych.*[^\.0-9][2-9]\.'
+then
+        echo Psych installed
+else
+        echo Running: gem install psych -v "$psych_ver"
+        gem install psych -v "$psych_ver"
+fi
+
+unset BUNDLE_GEMFILE
 for d in $dirs
 do
 (
+        echo "Testing test/$d/Gemfile using ruby $ruby_version ..."
         cd test/$d
         rm -f Gemfile.lock
         cp -f Gemfile.default Gemfile
         ../../exe/smart_bundle 
+        bundle exec ruby -e 'puts Time.now'
 )
 done
