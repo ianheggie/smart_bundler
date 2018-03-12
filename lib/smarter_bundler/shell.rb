@@ -18,5 +18,6 @@ module SmarterBundler
       result = shell(command)
       result.status.success?
     end
+
   end
 end
