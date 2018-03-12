@@ -54,7 +54,8 @@ do
         cd test/$d
         rm -f Gemfile.lock
         cp -f Gemfile.default Gemfile
-        ../../exe/smarter_bundle 
+        # Exclude debugger - it breaks for many varied reasons on travis
+        ../../exe/smarter_bundle  --without debug
         bundle exec ruby -e 'puts "Test of #{ENV['"'"'d'"'"']}/Gemfile with ruby #{RUBY_VERSION} passed at #{Time.now}!"'
   )
 done
