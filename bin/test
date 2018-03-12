@@ -1,0 +1,40 @@
+#!/bin/bash
+
+set -e
+
+ruby_version=`ruby -e 'puts RUBY_VERSION'`
+case "$ruby_version" in
+1.8.7)
+        dirs='rails30 rails31 rails32'
+        ;;
+1.9.2)
+        dirs='rails30 rails31 rails32'
+        ;;
+1.9.3)
+        dirs='rails30 rails31 rails32 rails40 rails41 rails42'
+        ;;
+2.0*)
+        dirs='rails32 rails40 rails41 rails42'
+        ;;
+2.1*)
+        dirs='rails41 rails42'
+        ;;
+2.2.[01]*)
+        dirs='rails42'
+        ;;
+2.2.2)
+        dirs='rails32 rails42 rails50 rails51'
+        ;;
+2.2.[2-9]*|2.[3-9]*)
+        dirs='rails50 rails51'
+        ;;
+esac
+for d in $dirs
+do
+(
+        cd test/$d
+        rm -f Gemfile.lock
+        cp -f Gemfile.default Gemfile
+        ../../exe/smart_bundle 
+)
+done
