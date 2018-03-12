@@ -6,7 +6,7 @@ module SmarterBundler
     include SmarterBundler::Shell
 
     KNOWN_ISSUES_192 = {
-       'unicorn' => '<~ 4.0'
+       'unicorn' => '5.0'
      }
 
     def run(bundle_args)
