@@ -20,7 +20,7 @@ module SmarterBundler
           previous_failure = failed_gem_and_version
           if install_failed_gem failed_gem_and_version
             puts "Retrying seems to have fixed the problem"
-          elsif ruby_version_clash(result) && gemfile.restrict_gem_version(failed_gem_and_version)
+          elsif ruby_version_clash(result) && gemfile.restrict_gem_version(*failed_gem_and_version)
             gemfile.save
             count += 1
           else
