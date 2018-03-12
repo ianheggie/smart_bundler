@@ -56,6 +56,9 @@ do
         cp -f Gemfile.default Gemfile
         # Exclude debugger - it breaks for many varied reasons on travis
         ../../exe/smarter_bundle  --without debug
+        echo Gemfile changes:
+        diff Gemfile.default Gemfile
+        echo
         bundle exec ruby -e 'puts "Test of #{ENV['"'"'d'"'"']}/Gemfile with ruby #{RUBY_VERSION} passed at #{Time.now}!"'
   )
 done
