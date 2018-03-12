@@ -6,8 +6,12 @@ module SmarterBundler
     include SmarterBundler::Shell
 
     KNOWN_ISSUES_192 = {
-       'unicorn' => '5.0'
+       'unicorn' => '5.0',
+       #'nokogiri' => '1.6.0',
+       'jbuilder' => '2.0.0',
      }
+
+
 
     def run(bundle_args)
       puts "Smarter Bundler will recursively install your gems and output the successful bundler output. This may take a while."
