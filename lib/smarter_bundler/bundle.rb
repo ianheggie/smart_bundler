@@ -8,7 +8,7 @@ module SmarterBundler
   class Bundle
     include SmarterBundler::Shell
 
-    KNOWN_ISSUES_192 = {
+    KNOWN_ISSUES_187_192 = {
         'unicorn' => '5.0',
         'nokogiri' => '1.6.0',
         'jbuilder' => '2.0.0',
@@ -16,9 +16,20 @@ module SmarterBundler
         'factory_bot' => '3.0',
     }
 
+    KNOWN_ISSUES_193_221 = {
+    }
+
+    KNOWN_ISSUES_222_22x = {
+        'listen' => '3.1.2',
+        'acts-as-taggable-on' => '5.0.0',
+        'guard-rails' => '0.7.3',
+        'jasmine' => '3.0.0',
+        'ruby_dep' => '1.4.0',
+    }
+
 
     def run(bundle_args)
-      puts "Smarter Bundler will recursively install your gems and output the successful bundler output. This may take a while."
+      puts 'Smarter Bundler will recursively install your gems and output the successful bundler output. This may take a while.'
       count = 0
       gemfile = SmarterBundler::Gemfile.new
       previous_failure = []
@@ -28,13 +39,13 @@ module SmarterBundler
         failed_gem_and_version = parse_output(result)
         if failed_gem_and_version
           if previous_failure == failed_gem_and_version
-            puts "Aborting: Stuck trying to install the same gem and version!"
+            puts 'Aborting: Stuck trying to install the same gem and version!'
             exit 1
           end
           previous_failure = failed_gem_and_version
           gem, version = *failed_gem_and_version
           if !ruby_version_clash(result) && install_failed_gem(gem, version)
-            puts "Retrying seems to have fixed the problem"
+            puts 'Retrying seems to have fixed the problem'
           elsif gemfile.restrict_gem_version(gem, known_issues(gem))
             gemfile.save
             count += 1
@@ -45,7 +56,7 @@ module SmarterBundler
             gemfile.save
             count += 1
           else
-            puts "Aborting: Unable to fix installation of gems"
+            puts 'Aborting: Unable to fix installation of gems'
             exit 2
           end
         else
@@ -69,8 +80,12 @@ module SmarterBundler
     end
 
     def known_issues(gem)
-      if RUBY_VERSION < '1.9.3'
-        KNOWN_ISSUES_192[gem]
+      if RUBY_VERSION <= '1.9.2'
+        KNOWN_ISSUES_187_192[gem]
+      elsif RUBY_VERSION <= '2.2.1'
+        KNOWN_ISSUES_193_221[gem]
+      elsif RUBY_VERSION <= '2.3'
+        KNOWN_ISSUES_222_22x[gem]
       else
         nil
       end

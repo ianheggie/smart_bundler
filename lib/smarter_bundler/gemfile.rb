@@ -62,7 +62,7 @@ module SmarterBundler
         end
         FileUtils.move "#{@filename}.new", @filename, :force => true
         @changed = false
-        puts 'Currently restricted:', *(@contents.select{|line| line =~ /Added by SmartBundler/})
+        puts 'Currently restricted:', *(@contents.select{|line| line =~ /Added by SmarterBundler/})
       end
     end
 
