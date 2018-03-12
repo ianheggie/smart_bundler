@@ -7,24 +7,32 @@ module SmarterBundler
       puts "Smarter Bundler will recursively install your gems and output the successful bundler output. This may take a while."
       count = 0
       gemfile = SmarterBundler::Gemfile.new
+      previous_failure = [ ]
+      result = nil
       while count < 100
         result = call_bundle(bundle_args)
         failed_gem_and_version = parse_output(result)
         if failed_gem_and_version
+          if previous_failure == failed_gem_and_version
+            puts "Aborting: Stuck trying to install the same gem and version!"
+            exit 1
+          end
+          previous_failure = failed_gem_and_version
           if install_failed_gem failed_gem_and_version
-            puts "retrying seems to have fixed the problem"
+            puts "Retrying seems to have fixed the problem"
           elsif gemfile.restrict_gem_version failed_gem_and_version
             gemfile.save
             count += 1
           else
-            puts "Unable fix the problem"
-            break
+            puts "Aborting: Unable to install the same or earlier version of the gem"
+            exit 2
           end
         else
           break
         end
       end
       puts "#{count} adjustments where made to the Gemfile"
+      exit result ? result.status.to_i : 3
     end
 
     def call_bundle(bundle_args)
@@ -36,11 +44,12 @@ module SmarterBundler
     end
 
     def parse_output(result)
-      if result.output.include?("Make sure that `")
-        cmd = result.output.split("Make sure that `")[1].split("`")[0]
-      else
-        nil
+      result.output.each do |line|
+        if line =~ /Make sure that `gem install (\S+) -v '(\S+)'`/
+          return [$1, $2]
+        end
       end
+      nil
     end
 
   end

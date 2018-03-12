@@ -48,11 +48,13 @@ unset BUNDLE_GEMFILE
 for d in $dirs
 do
   (
+        echo "======================================================================"
         echo "Testing test/$d/Gemfile using ruby $ruby_version ..."
+        export d
         cd test/$d
         rm -f Gemfile.lock
         cp -f Gemfile.default Gemfile
         ../../exe/smarter_bundle 
-        bundle exec ruby -e 'puts Time.now'
+        bundle exec ruby -e 'puts "Test of #{ENV['"'"'d'"'"']}/Gemfile with ruby #{RUBY_VERSION} passed at #{Time.now}!"'
   )
 done
