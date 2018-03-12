@@ -2,17 +2,17 @@
 
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require "smart_bundler/version"
+require "smarter_bundler/version"
 
 Gem::Specification.new do |spec|
-  spec.name          = "smart_bundler"
-  spec.version       = SmartBundler::VERSION
+  spec.name          = "smarter_bundler"
+  spec.version       = SmarterBundler::VERSION
   spec.authors       = ["Ian Heggie"]
   spec.email         = ["ian@heggie.biz"]
 
-  spec.summary       = %q{Smart Bundler for fixing gem version constraints}
-  spec.description   = %q{smart_bundle adjusts the Gemfile based on complaints from bundler.}
-  spec.homepage      = "https://github.com/ianheggie/smart_bundler"
+  spec.summary       = %q{Enhances bundler by adjusting Gemfile when correctable errors are found}
+  spec.description   = %q{The smarter_bundle retries installing gems, and if that fails it tries installing an earlier version by adjusting the Gemfile}
+  spec.homepage      = "https://github.com/ianheggie/smarter_bundler"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0").reject do |f|

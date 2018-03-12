@@ -1,8 +1,8 @@
 require "test_helper"
 
-class SmartBundlerTest < Minitest::Test
+class SmarterBundlerTest < Minitest::Test
   def test_that_it_has_a_version_number
-    refute_nil ::SmartBundler::VERSION
+    refute_nil ::SmarterBundler::VERSION
   end
 
   def test_it_does_something_useful

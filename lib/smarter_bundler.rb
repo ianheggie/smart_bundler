@@ -1,5 +1,7 @@
-require "smart_bundler/version"
+require "smarter_bundler/version"
+require "smarter_bundler/shell"
+require "smarter_bundler/bundle"
+require "smarter_bundler/gemfile"
 
-module SmartBundler
-  # Your code goes here...
+module SmarterBundler
 end

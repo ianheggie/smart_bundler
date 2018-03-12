@@ -1,18 +1,20 @@
-# SmartBundler
+# SmarterBundler
 
-smart_bundle not just runs bundle but can adjust the Gemfile to fix (some) reported errors when installing or updating gems.
+Enhances bundler by adjusting Gemfile when correctable errors are found
 
-It is primarily aimed at resolving ruby version conflicts where a gem now requires a different ruby version.
+It is primarily aimed at resolving ruby version conflicts where a gem now requires a later ruby version.
 
 ## Installation
 
 Install it using:
 
-    $ gem install smart_bundler
+    $ gem install smarter_bundler
+
+Do not install it via Gemfile, as it needs to execute even if bundle can't install/update the gems in Gemfile
 
 ## Usage
 
-Use smart_bundle instead of the bundle command when installing or upgrading gems.
+Use smarter_bundle instead of the bundle command when installing or upgrading gems.
 
 ## Notes
 
@@ -34,7 +36,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/ianheggie/smart_bundler.
+Bug reports and pull requests are welcome on GitHub at https://github.com/ianheggie/smarter_bundler.
 
 ## License
 
