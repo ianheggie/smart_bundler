@@ -21,18 +21,27 @@ module SmarterBundler
       end
       adjusted = false
       @contents.map! do |line|
-        if line =~ /^(\s*gem\s+['"]#{gem}['"])(\s*,\*['"]([^'"]*)['"])?(.*?)$/
+        if line =~ /^(\s*gem\s+['"]#{gem}['"])(.*)$/
           gem_and_name = $1
-          rest_of_line = $4
-          version = $3.to_s
-          puts "Found #{gem_and_name} with version spec: #{version} and other args: #{rest_of_line}"
-          new_version = version.sub(/<=?\s*[^,\s]+/, '').sub(/^\s*,\s*/, '').sub(/\s*,\s*$/, '') + (version == '' ? '' : ', ') + "< #{version_limit}"
-          puts "  Calculated new_version spec: #{new_version}"
-          if new_version != version
+          rest_of_line = $2
+          versions = [ ]
+          if rest_of_line =~ /^\s*,\s*['"]([^'"]*)['"](.*)/
+            versions = [ $1 ]
+            rest_of_line = $2
+          elsif rest_of_line =~ /^\s*,\s*\[([^\]]*)\](.*)/
+            rest_of_line = $2
+            versions = $1.split(',').map{|s| s.sub(/^[\s'"]*/, '').sub(/[\s'"]*$/, '')}
+          end
+          #puts "Found #{gem_and_name} in Gemfile with version spec: #{versions.inspect} and other args: #{rest_of_line}"
+          new_versions = versions.dup
+          new_versions.delete_if{|s| s =~ /</}
+          new_versions << "< #{version_limit}"
+          #puts "  Replacing with new version spec: #{new_versions.inspect}"
+          if new_versions != versions
             @changed = true
             rest_of_line.sub!(/  # REQUIRED - Added by SmarterBundler.*/, '')
             rest_of_line << '  # REQUIRED - Added by SmarterBundler'
-            line = "#{gem_and_name}, '#{new_version}'#{rest_of_line}"
+            line = "#{gem_and_name}, #{new_versions.inspect}#{rest_of_line}"
             puts "Changed Gemfile line to: #{line}"
             line
           else
@@ -53,6 +62,7 @@ module SmarterBundler
         end
         FileUtils.move "#{@filename}.new", @filename, :force => true
         @changed = false
+        puts 'Currently restricted:', *@contents.select{|line| line =~ /Added by SmartBundler/},''
       end
     end
 

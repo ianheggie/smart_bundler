@@ -44,21 +44,28 @@ if [ -n "$psych_ver" ]; then
         fi
 fi
 
+if [ $# -gt 0 ]; then
+  dirs="$*"
+fi
 unset BUNDLE_GEMFILE
 for d in $dirs
 do
-  (
-        echo "======================================================================"
-        echo "Testing test/$d/Gemfile using ruby $ruby_version ..."
-        export d
-        cd test/$d
-        rm -f Gemfile.lock
-        cp -f Gemfile.default Gemfile
-        # Exclude debugger - it breaks for many varied reasons on travis
-        ../../exe/smarter_bundle  --without debug
-        echo Gemfile changes:
-        diff Gemfile.default Gemfile
-        echo
-        bundle exec ruby -e 'puts "Test of #{ENV['"'"'d'"'"']}/Gemfile with ruby #{RUBY_VERSION} passed at #{Time.now}!"'
-  )
+  if [ -s "test/$d/Gemfile.default" ] ; then
+    (
+          echo "======================================================================"
+          echo "Testing test/$d/Gemfile using ruby $ruby_version ..."
+          export d
+          cd test/$d
+          rm -f Gemfile.lock
+          cp -f Gemfile.default Gemfile
+          # Exclude debugger - it breaks for many varied reasons on travis
+          ../../exe/smarter_bundle  --without debug
+          echo Gemfile changes:
+          diff Gemfile.default Gemfile
+          echo
+          bundle exec ruby -e 'puts "Test of #{ENV['"'"'d'"'"']}/Gemfile with ruby #{RUBY_VERSION} passed at #{Time.now}!"'
+    )
+  else
+    echo "Missing: test/$d/Gemfile.default - skipped"
+  fi
 done
