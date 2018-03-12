@@ -25,7 +25,7 @@ module SmarterBundler
           gem_and_name = $1
           rest_of_line = $4
           version = $3.to_s
-          puts "Found #{gem_name_name} with version spec: #{version} and other args: #{rest_of_line}"
+          puts "Found #{gem_and_name} with version spec: #{version} and other args: #{rest_of_line}"
           new_version = version.sub(/<=?\s*[^,\s]+/, '').sub(/^\s*,\s*/, '').sub(/\s*,\s*$/, '') + (version == '' ? '' : ', ') + "< #{version_limit}"
           puts "  Calculated new_version spec: #{new_version}"
           if new_version != version
