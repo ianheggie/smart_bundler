@@ -15,7 +15,7 @@ module SmarterBundler
     end
 
     def restrict_gem_version gem, version_limit
-      return false if version_limit.blank?
+      return false unless version_limit.to_s =~ /\d\.\d/
       if @contents.select{|line| line =~ /^\s*gem\s+['"]#{gem}['"]/}.empty?
         @contents << "gem '#{gem}', '>=0'"
       end
