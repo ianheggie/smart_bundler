@@ -10,6 +10,7 @@ module SmarterBundler
         end
         io.close
       end
+      puts "Command returned status: #{$?.to_i} (#{$?.success? ? 'success' : 'fail'})"
       Struct.new(:status, :output).new($?, output)
     end
   

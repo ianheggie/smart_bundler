@@ -1,3 +1,5 @@
+require 'fileutils'
+
 module SmarterBundler
 
   class Bundle

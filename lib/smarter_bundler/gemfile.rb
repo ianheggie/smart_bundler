@@ -16,7 +16,7 @@ module SmarterBundler
 
     def restrict_gem_version gem, version_limit
       if @contents.select{|line| line =~ /^\s*gem\s+['"]#{gem}['"]/}.empty?
-        @contents << "gem '#{gem}', '> 0'"
+        @contents << "gem '#{gem}', '>=0'"
       end
       adjusted = false
       @contents.map! do |line|
@@ -29,7 +29,9 @@ module SmarterBundler
             @changed = true
             rest_of_line.sub(/#.*/, '')
             rest_of_line << '  # REQUIRED - Added by SmarterBundler'
-            "#{gem_and_name}, '#{new_version}'#{rest_of_line}"
+            line = "#{gem_and_name}, '#{new_version}'#{rest_of_line}"
+            puts "Changed Gemfile line to: #{line}"
+            line
           else
             puts "Unable to change version for #{gem}"
             line
