@@ -128,9 +128,9 @@ module SmarterBundler
         end
         # puts "Trimmed prerelease list: #{list.inspect}"
         list
-      # rescue RuntimeError => ex
-      #   puts "Ignoring exception: #{ex} - we will have to work it out the slow way"
-      #   []
+      rescue RuntimeError => ex
+        puts "Ignoring exception: #{ex} - we will have to work it out the slow way"
+        []
       end
       list = @rubygems_cache[gem]
       if list.size == 0
