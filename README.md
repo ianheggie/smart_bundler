@@ -16,11 +16,7 @@ Do not install it via Gemfile, as it needs to execute even if bundle can't insta
 
 Use smarter_bundle instead of the bundle command when installing or upgrading gems.
 
-If you are using it in an automated deploy, then monitor the time the deploy takes, as 
-the more fixes this program does, the longer it takes (since it reruns bundler to check the fixed Gemfile).
-A reasonable limit would be four to ten times the time it normally takes to install.
-Once you hit that limit, then check your install log and incorporate the fixes it has found into your Gemfile
-source to remove the need for it to run bundler multiple times whilst it fixes the Gemfile.
+Smarter_bundle assumes that the gem bundler complains about is the one that needs to have its version restricted, as it can not determine if its that gem or the gem/s that require it that should be adjusted.
 
 ### Cleaning up afterwards
 
@@ -29,13 +25,14 @@ After smarter_bundle has updated the Gemfile, you should examine the changes, as
 2. smarter_bundle does not backtrack and recheck earlier adjustments - this may result in a gem being restricted that is no longer needed because the gem that originally needed ended up being restricted to the point it no longer has so many prerequisites. In the Gemfile.lock you will see that the gem is not required by any other gems, nor was it a gem you directly need.
 3. smarter_bundle does not know how to handle Gemfiles that are intended to be used with multiple ruby versions, so you will need to make a Gemfile that is intended for the ruby version you are checking it with and then incorporate the changes smarter_bundle makes back into the master Gemfile manually;
 
-### Using in test scripts
+### Using in test or deploy scripts
 
-If for some reason you do not use Gemfile.lock in automated testing (eg when testing gems with travis-ci), and you are testing against older ruby versions, then you may wish to consider using
-smarter_bundler - instead of the test script failing, smarter_bundler will update the Gemfile on the fly. Of course you are swapping processing time for convienience,
-so you should implement a time limit and manually update your Gemfile once the tests slow down too much.
-
-I usually prefer to fail fast and fix it then and there rather than delay the issue, but sometimes delaying failure till later when it can be worked around is appropriate.
+If you are using it in an automated deploy (ie where you are not using Gemfile.lock),
+then monitor the time the deploy takes, as 
+the more fixes this program does, the longer it takes (since it reruns bundler to check the fixed Gemfile).
+A reasonable limit would be four to ten times the time it normally takes to install.
+Once you hit that limit, then check your install log and incorporate the fixes it has found into your Gemfile
+source to remove the need for it to run bundler multiple times whilst it fixes the Gemfile.
 
 ## Notes
 

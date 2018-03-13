@@ -87,7 +87,16 @@ module SmarterBundler
     end
 
     def call_bundle(bundle_args)
-      shell "bundle #{bundle_args.join(' ')} && ruby -e 'puts \"Checking gems can be loaded ...\" ; require \"rubygems\" ; require \"bundler/setup\" ; Bundler.require(:default, :development, :test, :production) ; puts \"PASSED GEM LOAD TEST\" ' "
+      require_gems_check = if File.size? 'Rakefile'
+                             'bundle exec rake environment'
+                           else
+                             "ruby -e 'puts \"Checking gems can be loaded ...\" ; " +
+                             "require \"rubygems\" ; "+
+                             "require \"bundler/setup\" ; "+
+                             "Bundler.require(:default) ; "+
+                             "puts \"PASSED GEM LOAD TEST\" ' "
+                           end
+      shell "bundle #{bundle_args.join(' ')} && #{require_gems_check}"
     end
 
     def install_failed_gem(gem, version)
