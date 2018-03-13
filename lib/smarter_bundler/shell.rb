@@ -3,7 +3,7 @@ module SmarterBundler
     def shell(command)
       puts '', "+ #{command}"
       output = []
-      IO.popen("#{command} 2>&1") do |io|
+      IO.popen("#{command} 2>&1 < /dev/null") do |io|
         while line = io.gets
           puts line.chomp
           output << line.chomp

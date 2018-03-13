@@ -8,6 +8,6 @@ Gemfile.lock
 /pkg/
 /spec/reports/
 /tmp/
-/test/rails*/.bundle
-/test/rails*/Gemfile
-/test/rails*/Gemfile.lock
+/test/*/.bundle
+/test/*/Gemfile
+/test/*/Gemfile.lock

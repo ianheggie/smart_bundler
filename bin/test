@@ -62,7 +62,7 @@ do
           rm -f Gemfile.lock
           cp -f Gemfile.default Gemfile
           # Exclude debugger - it breaks for many varied reasons on travis
-          ../../exe/smarter_bundle  --without debug
+          ../../exe/smarter_bundle install --no-color --verbose --without debug
           echo Gemfile changes:
           diff Gemfile.default Gemfile
           echo
