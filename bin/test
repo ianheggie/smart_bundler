@@ -6,30 +6,30 @@ ruby_version=`ruby -e 'puts RUBY_VERSION'`
 psych_ver='< 3.0'
 case "$ruby_version" in
 1.8.7)
-        dirs='rails30 rails31 rails32'
+        dirs='rails30 rails31 rails32 special_cases'
         psych_ver=''
         ;;
 1.9.2)
-        dirs='rails30 rails31 rails32'
+        dirs='rails30 rails31 rails32 special_cases'
         ;;
 1.9.3)
-        dirs='rails30 rails31 rails32 rails40 rails41 rails42'
+        dirs='rails30 rails31 rails32 rails40 rails41 rails42 special_cases'
         ;;
 2.0*)
-        dirs='rails32 rails40 rails41 rails42'
+        dirs='rails32 rails40 rails41 rails42 special_cases'
         ;;
 2.1*)
-        dirs='rails41 rails42'
+        dirs='rails41 rails42 special_cases'
         ;;
 2.2.[01]*)
-        dirs='rails42'
+        dirs='rails42 special_cases'
         ;;
 2.2.2)
-        dirs='rails32 rails42 rails50 rails51'
+        dirs='rails32 rails42 rails50 rails51 special_cases'
         psych_ver='> 2.0'
         ;;
-2.2.[2-9]*|2.[3-9]*)
-        dirs='rails50 rails51'
+2.2.[2-9]*|2.[3-9]*|[3-9]*)
+        dirs='rails50 rails51 special_cases'
         gem install psych
         psych_ver='> 2.0'
         ;;
@@ -62,7 +62,7 @@ do
           rm -f Gemfile.lock
           cp -f Gemfile.default Gemfile
           # Exclude debugger - it breaks for many varied reasons on travis
-          ../../exe/smarter_bundle install --no-color --verbose --without debug
+          ../../exe/smarter_bundle --aggressive install --no-color --verbose --without debug
           echo Gemfile changes:
           diff Gemfile.default Gemfile
           echo

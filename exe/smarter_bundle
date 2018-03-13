@@ -5,4 +5,4 @@ $LOAD_PATH.unshift(path) unless $LOAD_PATH.include?(path)
 
 require 'smarter_bundler'
 
-SmarterBundler::Bundle.new.run ARGV.join(' ')
+SmarterBundler::Bundle.new.run ARGV

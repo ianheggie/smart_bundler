@@ -8,18 +8,20 @@ module SmarterBundler
   class Bundle
     include SmarterBundler::Shell
 
-    KNOWN_ISSUES_187_192 = {
+    # Note the versions listed in KNOWN_SOLUTIONS are the first NON working version
+    # for the first ruby version listed (eg 1.8.7, 1.9.3, 2.2.2)
+
+    KNOWN_SOLUTIONS_187_192 = {
         'unicorn' => '5.0',
         'nokogiri' => '1.6.0',
         'jbuilder' => '2.0.0',
         'factory_girl' => '3.0',
         'factory_bot' => '3.0',
+        'listen' => '3.1.2',
+        'css_parser' => '1.4.8',  # syntax error
     }
 
-    KNOWN_ISSUES_193_221 = {
-    }
-
-    KNOWN_ISSUES_222_22x = {
+    KNOWN_SOLUTIONS_193_221 = {
         'listen' => '3.1.2',
         'acts-as-taggable-on' => '5.0.0',
         'guard-rails' => '0.7.3',
@@ -27,13 +29,30 @@ module SmarterBundler
         'ruby_dep' => '1.4.0',
     }
 
+    KNOWN_SOLUTIONS_222_22x = {
+    }
+
 
     def run(bundle_args)
+      @aggressive = bundle_args.first == '--aggressive'
+      if @aggressive
+        bundle_args = bundle_args.drop(1)
+      end
       puts 'Smarter Bundler will recursively install your gems and output the successful bundler output. This may take a while.'
       count = 0
       gemfile = SmarterBundler::Gemfile.new
       previous_failure = []
       result = nil
+      if @aggressive
+        known_solutions.each do |gem, version|
+          if gemfile.mentions? gem
+            gemfile.restrict_gem_version(gem, version)
+            count += 1
+          end
+        end
+        puts "Made #{count} adjustments in Gemfile based on known solutions" if count > 0
+      end
+
       while count < 100
         result = call_bundle(bundle_args)
         failed_gem_and_version = parse_output(result)
@@ -44,15 +63,15 @@ module SmarterBundler
           end
           previous_failure = failed_gem_and_version
           gem, version = *failed_gem_and_version
-          if !ruby_version_clash(result) && install_failed_gem(gem, version)
-            puts 'Retrying seems to have fixed the problem'
-          elsif gemfile.restrict_gem_version(gem, known_issues(gem))
+          if gemfile.restrict_gem_version(gem, known_solution(gem))
             gemfile.save
             count += 1
-          elsif ruby_version_clash(result) && gemfile.restrict_gem_version(gem, rubygems_earlier_version(gem, version))
+          elsif !fatal_error(result) && install_failed_gem(gem, version)
+              puts 'Retrying seems to have fixed the problem'
+          elsif ruby_version_error(result) && gemfile.restrict_gem_version(gem, rubygems_earlier_version(gem, version))
             gemfile.save
             count += 1
-          elsif ruby_version_clash(result) && gemfile.restrict_gem_version(gem, version)
+          elsif fatal_error(result) && gemfile.restrict_gem_version(gem, version)
             gemfile.save
             count += 1
           else
@@ -68,32 +87,48 @@ module SmarterBundler
     end
 
     def call_bundle(bundle_args)
-      shell "bundle #{bundle_args}"
+      shell "bundle #{bundle_args.join(' ')} && ruby -e 'puts \"Checking gems can be loaded ...\" ; require \"rubygems\" ; require \"bundler/setup\" ; Bundler.require(:default) ; puts \"PASSED GEM LOAD TEST\" ' "
     end
 
     def install_failed_gem(gem, version)
       shell? "gem install '#{gem}' -v '#{version}'"
     end
 
-    def ruby_version_clash(result)
+    def fatal_error(result)
+      ruby_version_error(result)  || syntax_error(result)
+    end
+
+    def ruby_version_error(result)
       result.output.select { |l| l =~ /requires Ruby version/ }.any?
     end
 
-    def known_issues(gem)
+    def syntax_error(result)
+      result.output.select { |l| l =~ /(: syntax error|SyntaxError: )/ }.any?
+    end
+
+    def known_solution(gem)
+      known_solutions[gem]
+    end
+
+    def known_solutions
       if RUBY_VERSION <= '1.9.2'
-        KNOWN_ISSUES_187_192[gem]
+        KNOWN_SOLUTIONS_187_192
       elsif RUBY_VERSION <= '2.2.1'
-        KNOWN_ISSUES_193_221[gem]
+        KNOWN_SOLUTIONS_193_221
       elsif RUBY_VERSION <= '2.3'
-        KNOWN_ISSUES_222_22x[gem]
+        KNOWN_SOLUTIONS_222_22x
       else
-        nil
+        { }
       end
     end
 
     def parse_output(result)
       result.output.each do |line|
         if line =~ /Make sure that `gem install (\S+) -v '(\S+)'`/
+          return [$1, $2]
+        elsif line =~ %r{SyntaxError: .*/ruby/[^/]*/gems/([^/]*)-(\d[^/]+)/}
+            return [$1, $2]
+        elsif line =~ %r{/ruby/[^/]*/gems/([^/]*)-(\d[^/]+)/\S+:\d+: syntax error}
           return [$1, $2]
         end
       end

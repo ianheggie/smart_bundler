@@ -39,10 +39,13 @@ I usually prefer to fail fast and fix it then and there rather than delay the is
 
 ## Notes
 
-If the error indicates a ruby version conflict, then it will lookup the gem on rubygems to find the earliest version with the same ruby spec
+If the error indicates a ruby version conflict,
+then it will lookup the gem on rubygems to find the earliest version with the same ruby spec
 and update the Gemfile to specify a version prior to that. If the lookup of rubygems fails, then it will simply check the next earlier version.
 
-If the error was not from a ruby version conflict, it will attempt to install the gem directly once more.
+Syntax errors will trigger smarter_bundle to try the immediately earlier version, without looking up rubygems, because a syntax error indicates the gemspec doesn't correctly specify the required ruby versions.
+
+If the error was not from a ruby version conflict or syntax error, it will attempt to install the gem directly once more.
 
 It will attempt to fix the Gemfile up to 100 times before giving up as long as each attempt is making progress.
 

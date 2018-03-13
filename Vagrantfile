@@ -9,7 +9,11 @@ Vagrant.configure("2") do |config|
   # provision with a shell script.
   config.vm.provision "shell",
     path: "https://raw.githubusercontent.com/ianheggie/provision_vagrant/master/provision?cache_bust=#{Process.pid}",
-    args: %w{ /vagrant }
+    args: %w{ /vagrant /vagrant/test/rails30 /vagrant/test/rails31 /vagrant/test/rails32 /vagrant/test/rails40
+              /vagrant/test/rails41 /vagrant/test/rails42 /vagrant/test/rails50 /vagrant/test/rails51
+              /vagrant/test/special_cases }
+
+
 
   # Stop nagging as this box changes daily...
   config.vm.box_check_update = true

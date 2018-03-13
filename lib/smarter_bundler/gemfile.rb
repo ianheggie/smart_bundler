@@ -14,9 +14,13 @@ module SmarterBundler
       @changed = false
     end
 
+    def mentions? gem
+      @contents.select { |line| line =~ /^\s*gem\s+['"]#{gem}['"]/ }.any?
+    end
+
     def restrict_gem_version gem, version_limit
       return false unless version_limit.to_s =~ /\d\.\d/
-      if @contents.select { |line| line =~ /^\s*gem\s+['"]#{gem}['"]/ }.empty?
+      if ! mentions? gem
         @contents << "gem '#{gem}', '>=0'"
       end
       adjusted = false
