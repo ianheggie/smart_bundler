@@ -1,6 +1,6 @@
 # SmarterBundler
 
-Enhances bundler by adjusting Gemfile when correctable errors are found
+Enhances bundler by adjusting Gemfile when correctable errors are found.
 
 It is primarily aimed at resolving ruby version conflicts where a gem now requires a later ruby version.
 
@@ -16,15 +16,20 @@ Do not install it via Gemfile, as it needs to execute even if bundle can't insta
 
 Use smarter_bundle instead of the bundle command when installing or upgrading gems.
 
+If you are using it in an automated deploy, then monitor the time the deploy takes, as 
+the more fixes this program does, the longer it takes (since it reruns bundler to check the fixed Gemfile).
+A reasonable limit would be four to ten times the time it normally takes to install.
+Once you hit that limit, then check your install log and incorporate the fixes it has found into your Gemfile
+source to remove the need for it to run bundler multiple times whilst it fixes the Gemfile.
+
 ## Notes
 
-The algorithm is simplistic - when an error of the form 
-`Gem::RuntimeRequirementNotMetError: <gem_name> requires Ruby version`
-is found, as well as
-`An error occurred while installing <gem_name> (<gem_version>), and Bundler cannot continue`
-Then it adjusts the Gemfile to require a version of that gem lower than the one that produced the error.
+If the error indicates a ruby version conflict, then it will lookup the gem on rubygems to find the earliest version with the same ruby spec
+and update the Gemfile to specify a version prior to that. If the lookup of rubygems fails, then it will simply check the next earlier version.
 
-It will attempt upto 100 times to adjust the Gemfile before giving up.
+If the error was not from a ruby version conflict, it will attempt to install the gem directly once more.
+
+It will attempt to fix the Gemfile up to 100 times before giving up as long as each attempt is making progress.
 
 Once the Gemfile has been adjusted, commit it into your source repository so that it does not need to be used again.
 
