@@ -87,7 +87,7 @@ module SmarterBundler
     end
 
     def call_bundle(bundle_args)
-      shell "bundle #{bundle_args.join(' ')} && ruby -e 'puts \"Checking gems can be loaded ...\" ; require \"rubygems\" ; require \"bundler/setup\" ; Bundler.require(:default) ; puts \"PASSED GEM LOAD TEST\" ' "
+      shell "bundle #{bundle_args.join(' ')} && ruby -e 'puts \"Checking gems can be loaded ...\" ; require \"rubygems\" ; require \"bundler/setup\" ; Bundler.require(:default, :development, :test, :production) ; puts \"PASSED GEM LOAD TEST\" ' "
     end
 
     def install_failed_gem(gem, version)
