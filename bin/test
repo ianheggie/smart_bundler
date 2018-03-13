@@ -48,6 +48,9 @@ if [ $# -gt 0 ]; then
   dirs="$*"
 fi
 unset BUNDLE_GEMFILE
+
+which bundle || ( gem install bundler ; bundle )
+
 for d in $dirs
 do
   if [ -s "test/$d/Gemfile.default" ] ; then
