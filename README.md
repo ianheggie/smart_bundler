@@ -39,6 +39,43 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 
 To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
 
+
+### Testing in a VM
+
+Use a vagrant virtual box for consistant results.
+
+Install vagrant 1.9.7 or later and virtual_box or other local virtual machine providor.
+
+Create a temp directory for throw away testing, and clone the gem into it
+
+    mkdir -p ~/tmp
+    cd ~/tmp
+    git clone https://github.com/ianheggie/smarter_bundler.git ~/tmp/smarter_bundler
+
+The Vagrantfile includes provisioning rules to install chruby (ruby version control),
+ruby-build will also be installed and run to build various rubies under /opt/rubies.
+
+Use <tt>vagrant ssh</tt> to connect to the virtual box and run tests.
+
+Cd to the checked out smarter_bundler directory and then run the test as follows:
+
+    cd ~/tmp/smarter_bundler
+
+    vagrant up   # this will also run vagrant provision and take some time
+                 # chruby and various ruby versions will be installed
+
+    vagrant ssh
+
+    cd /vagrant  # the current directory on your host is mounted here on the virtual machine
+
+    chruby 2.2.2 # or some other ruby version (run chruby with no arguments to see the current list)
+
+    bin/test
+
+    exit        # from virtual machine when finished
+
+The test script will run the smarter_bundle command on various rails Gemfiles (selected based on the current ruby version).
+
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/ianheggie/smarter_bundler.
