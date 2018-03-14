@@ -64,7 +64,7 @@ do
           # Exclude debugger - it breaks for many varied reasons on travis
           ../../exe/smarter_bundle --aggressive install --no-color --verbose --without debug
           echo Gemfile changes:
-          diff Gemfile.default Gemfile
+          diff Gemfile.default Gemfile || echo "Changes where made to the Gemfile (which is acceptable)"
           echo
           bundle exec ruby -e 'puts "Test of #{ENV['"'"'d'"'"']}/Gemfile with ruby #{RUBY_VERSION} passed at #{Time.now}!"'
     )
@@ -72,3 +72,4 @@ do
     echo "Missing: test/$d/Gemfile.default - skipped"
   fi
 done
+echo PASSED TESTING!
