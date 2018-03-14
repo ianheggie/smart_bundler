@@ -48,6 +48,10 @@ It will attempt to fix the Gemfile up to 100 times before giving up as long as e
 
 Once the Gemfile has been adjusted, commit it into your source repository so that it does not need to be used again.
 
+## Automated testing 
+
+* {<img src="https://travis-ci.org/ianheggie/smarter_bundler.png">}[https://travis-ci.org/ianheggie/smarter_bundler]  - Travis CI
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bin/test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.

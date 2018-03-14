@@ -1,2 +1,2 @@
-* 1.0.0
-  * First producton version (used by health_check tests and my clients projects)
+* 0.3.0
+  * First producton version (used by health_check tests and my clients projects) that passes all the tests
