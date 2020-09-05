@@ -3,11 +3,9 @@
 set -e
 
 ruby_version=`ruby -e 'puts RUBY_VERSION'`
-psych_ver='< 3.0'
 case "$ruby_version" in
 1.8.7)
         dirs='rails30 rails31 rails32 special_cases'
-        psych_ver=''
         ;;
 1.9.2)
         dirs='rails30 rails31 rails32 special_cases'
@@ -26,23 +24,11 @@ case "$ruby_version" in
         ;;
 2.2.2)
         dirs='rails32 rails42 rails50 rails51 special_cases'
-        psych_ver='> 2.0'
         ;;
 2.2.[2-9]*|2.[3-9]*|[3-9]*)
         dirs='rails50 rails51 special_cases'
-        gem install psych
-        psych_ver='> 2.0'
         ;;
 esac
-if [ -n "$psych_ver" ]; then
-        if gem list | egrep 'psych.*[^\.0-9][2-9]\.'
-        then
-                echo Psych installed
-        else
-                echo Running: gem install psych -v "$psych_ver"
-                gem install psych -v "$psych_ver"
-        fi
-fi
 
 if [ $# -gt 0 ]; then
   dirs="$*"
