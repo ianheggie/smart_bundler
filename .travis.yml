@@ -21,14 +21,11 @@ matrix:
 
   include:
     - rvm: 1.9.3
-
     - rvm: 2.0.0
-
     - rvm: 2.1.10
-
     - rvm: 2.2.9
-
     - rvm: 2.3.6
-
     - rvm: 2.4.3
-
+    - rvm: 2.5.8
+    - rvm: 2.6.6
+    - rvm: 2.8.1
